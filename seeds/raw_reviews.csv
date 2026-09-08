@@ -1,0 +1,11 @@
+﻿listing_id,date,reviewer_name,comments,sentiment
+3176,2020-01-01 00:00:00,John Doe,Great place to stay,positive
+3176,2020-01-15 00:00:00,Jane Smith,Good but bit noisy,neutral
+5238,2020-02-01 00:00:00,Mike Johnson,Perfect location,positive
+7890,2020-02-10 00:00:00,Sarah Lee,Tiny room but affordable,neutral
+8901,2020-03-01 00:00:00,Bob Wilson,Excellent service,positive
+8901,2020-03-15 00:00:00,Alice Brown,Not what expected,negative
+3176,2020-04-01 00:00:00,Tom Harris,Amazing views,positive
+5238,2020-04-20 00:00:00,Emma Davis,Clean and maintained,positive
+7890,2020-05-05 00:00:00,Charlie King,Average experience,neutral
+8901,2020-05-25 00:00:00,Diana Prince,Shared room crowded,negative

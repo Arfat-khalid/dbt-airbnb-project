@@ -31,3 +31,20 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   airbnb:
+seeds:
+  airbnb:
+    raw_hosts:
+      +column_types:
+        id: bigint
+    raw_listings:
+      +column_types:
+        id: bigint
+        price: varchar
+    raw_reviews:
+      +column_types:
+        listing_id: bigint
+      +ignore_errors: true
+      +strict_mode: false
+    seed_full_moon_dates:
+      +column_types:
+        full_moon_date: date

@@ -39,6 +39,7 @@ models:
       
 seeds:
   airbnb:
+    schema: raw
     raw_hosts:
       +column_types:
         id: bigint

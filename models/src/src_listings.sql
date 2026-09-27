@@ -1,5 +1,5 @@
 WITH raw_listings AS (
-    SELECT * FROM main.raw_listings
+    SELECT * FROM {{ ref('raw_listings') }}
 )
 SELECT
     id AS listing_id,

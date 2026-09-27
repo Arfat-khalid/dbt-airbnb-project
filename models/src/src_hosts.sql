@@ -1,5 +1,5 @@
 with raw_hosts AS (
-    SELECT * FROM main.raw_hosts
+    SELECT * FROM {{ ref('raw_hosts') }}
 )
 select 
 id as host_id, 

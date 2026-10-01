@@ -55,3 +55,6 @@ seeds:
     seed_full_moon_dates:
       +column_types:
         full_moon_date: date
+
+data_tests:
+  +store_failures: true

@@ -58,3 +58,4 @@ seeds:
 
 data_tests:
   +store_failures: true
+  +schema: test_results

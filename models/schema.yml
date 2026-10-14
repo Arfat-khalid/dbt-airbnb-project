@@ -1,11 +1,13 @@
 models:
   - name: dim_listings_cleansed
+    description: "Cleansed table which contains Airbnb listings"
     data_tests:
       - minimum_row_count:
           arguments:
             min_row_count: 1000
     columns: 
       - name: listing_id
+        description: "Unique identifier for each listing"
         tests:
           - not_null
           - unique
@@ -18,6 +20,7 @@ models:
                 field: host_id
 
       - name: room_type
+        description: "Type of room being offered"
         tests:
           - accepted_values:
               arguments:
@@ -26,11 +29,13 @@ models:
                         'Shared room',
                             'Hotel room']
       - name: minimum_nights
+        description: '{{ doc("dim_listing_cleansed__minimum_nights") }}'
         data_tests:
           - positive_values
 
   
-  - name: dim_hosts_cleansed 
+  - name: dim_hosts_cleansed
+    description: "Cleansed table which contains Airbnb hosts data"
     config:
       contract:
         enforced: true

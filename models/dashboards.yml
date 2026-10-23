@@ -1,0 +1,13 @@
+# models/dashboards.yml
+exposures:
+  - name: executive_dashboard
+    label: Executive Dashboard
+    type: dashboard
+    maturity: low
+    url: https://example.com/dashboard
+    description: Executive dashboard about Airbnb listings and hosts
+    depends_on:
+      - ref('dim_listings_w_host')
+      - ref('mart_fullmoon_reviews')
+    owner:
+      name: Arfat Khalid

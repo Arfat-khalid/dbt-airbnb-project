@@ -47,6 +47,8 @@ models:
       +materialized: table
     src:
       +materialized: ephemeral
+    fct:
+      +tags: ['fact']
       
 seeds:
   airbnb:

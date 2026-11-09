@@ -2,7 +2,7 @@
 
 sources:
   - name: airbnb
-    schema: dev_raw
+    schema:  "{{ 'raw' if target.name == 'prod' else target.schema ~ '_raw' }}"
     tables:
       - name: listings
         identifier: raw_listings

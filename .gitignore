@@ -11,3 +11,4 @@ __pycache__/
 seeds/*.csv
 *.csv
 dbt_project.yml.bak
+target-prod/

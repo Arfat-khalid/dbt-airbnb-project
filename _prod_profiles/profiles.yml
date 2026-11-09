@@ -1,0 +1,15 @@
+airbnb:
+  outputs:
+    dev:
+      type: duckdb
+      path: dev.duckdb
+      schema: dev
+      threads: 4
+
+    prod:
+      type: duckdb
+      path: prod.duckdb
+      schema: prod
+      threads: 4
+
+  target: dev

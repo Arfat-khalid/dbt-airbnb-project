@@ -49,5 +49,5 @@ jobs:
       - name: dbt build (changed models, their parents and children)
         run: |
           dbt build --profiles-dir _prod_profiles --target dev \
-            --select "state:modified" --state ./prod-target \
+            --select "@state:modified" --state ./prod-target \
             --indirect-selection cautious

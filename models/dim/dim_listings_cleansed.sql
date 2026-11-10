@@ -17,6 +17,7 @@ SELECT
 	CASE wHEN minimum_nights = 0 THEN 1 ELSE minimum_nights	END AS minimum_nights,
 	host_id,
 	CAST(REPLACE(price_str,'$' ,'') AS INT) AS price,
+	price_str,
 	created_at,
 	updated_at
 FROM

@@ -41,7 +41,7 @@ jobs:
       - run: dbt build --profiles-dir _prod_profiles --target prod
 
       - name: Upload prod target as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: prod-target
           path: target/

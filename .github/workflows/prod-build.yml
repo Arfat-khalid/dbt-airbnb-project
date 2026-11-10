@@ -32,6 +32,9 @@ jobs:
           curl -sSfL -o seeds/raw_hosts.csv    https://dbtlearn.s3.amazonaws.com/hosts.csv
           curl -sSfL -o seeds/raw_listings.csv https://dbtlearn.s3.amazonaws.com/listings.csv
           curl -sSfL -o seeds/raw_reviews.csv  https://dbtlearn.s3.amazonaws.com/reviews.csv
+          # dbt-duckdb loads seeds with COPY, which doesn't treat "" as an escaped quote.
+          # 9 rows contain "" (e.g. "Mengnan ""M"""), so remove them all.
+          sed -i 's/""//g' seeds/raw_reviews.csv
 
       - run: dbt deps  --profiles-dir _prod_profiles --target prod
       - run: dbt seed  --profiles-dir _prod_profiles --target prod

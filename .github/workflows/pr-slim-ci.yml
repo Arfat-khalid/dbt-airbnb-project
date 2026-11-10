@@ -1,0 +1,49 @@
+# .github/workflows/pr-slim-ci.yml
+# DuckDB version of the course's pr-slim-ci.yml.
+# On every pull request: download the last prod manifest and build only what the PR changed.
+# No --defer: prod.duckdb only existed on the deploy runner, so changed models are built
+# together with their parents (+state:modified+) in a fresh DuckDB file.
+name: PR slim CI
+
+on:
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  slim-ci:
+    name: Build modified models
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Download raw seed CSVs
+        run: |
+          curl -sSfL -o seeds/raw_hosts.csv    https://dbtlearn.s3.amazonaws.com/hosts.csv
+          curl -sSfL -o seeds/raw_listings.csv https://dbtlearn.s3.amazonaws.com/listings.csv
+          curl -sSfL -o seeds/raw_reviews.csv  https://dbtlearn.s3.amazonaws.com/reviews.csv
+
+      - run: dbt deps --profiles-dir _prod_profiles --target dev
+
+      - name: Download latest prod-target artifact from main
+        uses: dawidd6/action-download-artifact@v21
+        with:
+          workflow: prod-build.yml
+          branch: main
+          name: prod-target
+          path: prod-target
+          if_no_artifact_found: fail
+
+      - run: dbt seed --profiles-dir _prod_profiles --target dev
+      - name: dbt build (changed models, their parents and children)
+        run: |
+          dbt build --profiles-dir _prod_profiles --target dev \
+            --select "+state:modified+" --state ./prod-target

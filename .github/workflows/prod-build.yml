@@ -1,0 +1,45 @@
+# .github/workflows/prod-build.yml
+# DuckDB version of the course's prod-build.yml.
+# Builds prod on every merge to main (or manually) and saves target/ (incl. manifest.json)
+# as an artifact, which pr-slim-ci.yml compares against.
+name: Prod deploy (on merge to main / manual)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    name: Production deps and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      # The raw CSVs are too large for Git, so fetch them on the runner.
+      # Use the same links you downloaded them from for the course.
+      - name: Download raw seed CSVs
+        run: |
+          curl -sSfL -o seeds/raw_hosts.csv    https://dbtlearn.s3.amazonaws.com/hosts.csv
+          curl -sSfL -o seeds/raw_listings.csv https://dbtlearn.s3.amazonaws.com/listings.csv
+          curl -sSfL -o seeds/raw_reviews.csv  https://dbtlearn.s3.amazonaws.com/reviews.csv
+
+      - run: dbt deps  --profiles-dir _prod_profiles --target prod
+      - run: dbt seed  --profiles-dir _prod_profiles --target prod
+      - run: dbt build --profiles-dir _prod_profiles --target prod
+
+      - name: Upload prod target as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-target
+          path: target/
+          retention-days: 90

@@ -39,8 +39,6 @@ on-run-start:
 
 models:
   airbnb:
-    +grants:
-      select: ["transform", "reporter"]
     +post-hook:
       - "INSERT INTO {{ target.database }}.{{ target.schema }}.audit_log VALUES ('{{ this }}', CURRENT_TIMESTAMP)"
     +materialized: view
@@ -53,7 +51,7 @@ models:
       
 seeds:
   airbnb:
-    schema: raw
+    +schema: raw
     raw_hosts:
       +column_types:
         id: bigint
@@ -64,8 +62,6 @@ seeds:
     raw_reviews:
       +column_types:
         listing_id: bigint
-      +ignore_errors: true
-      +strict_mode: false
     seed_full_moon_dates:
       +column_types:
         full_moon_date: date

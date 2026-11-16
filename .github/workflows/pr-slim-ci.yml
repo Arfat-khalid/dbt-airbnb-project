@@ -1,8 +1,9 @@
 # .github/workflows/pr-slim-ci.yml
-# DuckDB version of the course's pr-slim-ci.yml.
-# On every pull request: download the last prod manifest and build only what the PR changed.
-# No --defer: prod.duckdb only existed on the deploy runner, so changed models are built
-# together with their parents (+state:modified+) in a fresh DuckDB file.
+# On every pull request: compare with the last prod manifest and build only what the PR changed.
+# Why @state:modified and not the usual "state:modified+ --defer":
+#   each CI run starts with an empty DuckDB file and prod.duckdb is not reachable, so there is
+#   nothing to defer to. @state:modified builds the changed models, their children and every parent
+#   those need; --indirect-selection cautious skips tests that reach outside that selection.
 name: PR slim CI
 
 on:
@@ -31,8 +32,9 @@ jobs:
           curl -sSfL -o seeds/raw_listings.csv https://dbtlearn.s3.amazonaws.com/listings.csv
           curl -sSfL -o seeds/raw_reviews.csv  https://dbtlearn.s3.amazonaws.com/reviews.csv
           # dbt-duckdb loads seeds with COPY, which doesn't treat "" as an escaped quote.
-          # 9 rows contain "" (e.g. "Mengnan ""M"""), so remove them all.
-          sed -i 's/""//g' seeds/raw_reviews.csv
+          # 9 reviewer names contain "" (e.g. "Mengnan ""M"""); this turns them into "Mengnan  M",
+          # the same cleanup as the local copy.
+          sed -i -E 's/""([^"]*)"""/ \1"/g' seeds/raw_reviews.csv
 
       - run: dbt deps --profiles-dir _prod_profiles --target dev
 

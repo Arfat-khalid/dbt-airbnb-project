@@ -1,0 +1,6 @@
+seeds:
+  - name: seed_full_moon_dates
+    description: "Full moon dates, used to flag reviews written after a full moon."
+    columns:
+      - name: full_moon_date
+        description: "Date of the full moon."

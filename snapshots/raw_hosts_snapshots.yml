@@ -1,5 +1,6 @@
 snapshots:
 - name: scd_raw_hosts
+  description:  "SCD Type 2 history of raw hosts: one row per version, valid between dbt_valid_from and dbt_valid_to."
   relation: source('airbnb', 'hosts')
   config:
     unique_key: id

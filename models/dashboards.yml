@@ -5,7 +5,7 @@ exposures:
     type: dashboard
     maturity: low
     url: https://example.com/dashboard
-    description: Executive dashboard about Airbnb listings and hosts
+    description: this is just an illustration of a dashboard exposure
     depends_on:
       - ref('dim_listings_w_host')
       - ref('mart_fullmoon_reviews')

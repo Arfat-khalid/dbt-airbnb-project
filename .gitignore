@@ -8,7 +8,9 @@ venv/
 .venv/
 .env
 __pycache__/
-seeds/*.csv
-*.csv
-dbt_project.yml.bak
 target-prod/
+.user.yml
+.vscode/
+seeds/raw_hosts.csv
+seeds/raw_listings.csv
+seeds/raw_reviews.csv

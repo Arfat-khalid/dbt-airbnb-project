@@ -1,24 +1,24 @@
-{{config(
+{{ config(
 	materialized='view',
 	event_time = 'created_at'
 )
 }}
 
 WITH src_listings AS (
-SELECT
-	*
-FROM
-	{{ref('src_listings')}}
+    SELECT *
+    FROM
+        {{ ref('src_listings') }}
 )
+
 SELECT
-	listing_id,
-	listing_name,
-	room_type,
-	CASE wHEN minimum_nights = 0 THEN 1 ELSE minimum_nights	END AS minimum_nights,
-	host_id,
-	CAST(REPLACE(price_str,'$' ,'') AS INT) AS price,
-	price_str,
-	created_at,
-	updated_at
+    listing_id,
+    listing_name,
+    room_type,
+    CASE WHEN minimum_nights = 0 THEN 1 ELSE minimum_nights END AS minimum_nights,
+    host_id,
+    CAST(REPLACE(price_str, '$', '') AS INT) AS price,
+    price_str,
+    created_at,
+    updated_at
 FROM
-	src_listings
+    src_listings

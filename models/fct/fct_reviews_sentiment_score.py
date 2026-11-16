@@ -12,11 +12,11 @@ def model(dbt, session):
         materialized = "table"
         
     )
-    fct_reviews_sentiment_score = dbt.ref("fct_reviews")
-    fct_reviews_sentiment_score_df = fct_reviews_sentiment_score.df()
+    reviews = dbt.ref("fct_reviews")
+    reviews_df = reviews.df()
 
     # Calculate sentiment score based on review text
-    fct_reviews_sentiment_score_df["SENTIMENT_SCORE"] = fct_reviews_sentiment_score_df["review_text"].apply(get_sentiment_score)
+    reviews_df["SENTIMENT_SCORE"] = reviews_df["review_text"].apply(get_sentiment_score)
 
     # return final dataset (Pandas DataFrame)
-    return fct_reviews_sentiment_score_df
+    return reviews_df

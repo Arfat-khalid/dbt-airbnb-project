@@ -8,15 +8,14 @@ def is_holiday(date_col):
 
 def model(dbt, session):
     dbt.config(
-        materialized = "table",
-        packages = ["holidays"]
+        materialized = "table"
     )
 
-    orders_df = dbt.ref("seed_full_moon_dates")
+    full_moon_dates = dbt.ref("seed_full_moon_dates")
 
-    df = orders_df.df()
+    full_moon_df = full_moon_dates.df()
 
-    df["IS_HOLIDAY"] = df["full_moon_date"].apply(is_holiday)
+    full_moon_df["IS_HOLIDAY"] = full_moon_df["full_moon_date"].apply(is_holiday)
 
     # return final dataset (Pandas DataFrame)
-    return df
+    return full_moon_df

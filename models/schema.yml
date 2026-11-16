@@ -1,4 +1,13 @@
 models:
+  - name: src_listings
+    description: "Raw listings with renamed columns; no business logic (ephemeral)."
+
+  - name: src_hosts
+    description: "Raw hosts with renamed columns; no business logic (ephemeral)."
+
+  - name: src_reviews
+    description: "Raw reviews with renamed columns; no business logic (ephemeral)."
+
   - name: dim_listings_cleansed
     description: "Cleansed table which contains Airbnb listings"
     data_tests:
@@ -8,11 +17,12 @@ models:
     columns: 
       - name: listing_id
         description: "Unique identifier for each listing"
-        tests:
+        data_tests:
           - not_null
           - unique
       - name: host_id
-        tests:
+        description: 'Host of the listing; References dim_hosts_cleansed.host_id'
+        data_tests:
           - not_null
           - relationships:
               arguments:
@@ -21,17 +31,26 @@ models:
 
       - name: room_type
         description: "Type of room being offered"
-        tests:
+        data_tests:
           - accepted_values:
               arguments:
                 values: ['Entire home/apt',
                         'Private room',
                         'Shared room',
-                            'Hotel room']
+                        'Hotel room']
       - name: minimum_nights
         description: '{{ doc("dim_listing_cleansed__minimum_nights") }}'
         data_tests:
           - positive_values
+
+      - name: price
+        description: 'Nightly price of the listing in USD as integer, parse from price_str'
+
+      - name: price_str
+        description: "Original price text from the source, e.g. '$90.00'."
+
+      - name: created_at
+        description: "When the listing was created on Airbnb."  
 
   
   - name: dim_hosts_cleansed
@@ -79,13 +98,21 @@ models:
       - name: created_at
         data_type: timestamp
   - name: dim_listings_w_host
-    tests:
+    description: "Cleansed listings enriched with host name and superhost flag (hosts v2). One row per listing."      
+    data_tests:
       - dbt_expectations.expect_table_row_count_to_equal_other_table:
           arguments:
             compare_model: source('airbnb', 'listings')
     columns:
+      - name: listing_id
+        description: "Unique identifier of the listing."
+      - name: host_is_superhost
+        description: "Whether the host is an Airbnb superhost ('t' / 'f')."
+      - name: updated_at
+        description: "Latest update of either the listing or its host."
       - name: price
-        tests:
+        description: "Nightly price in USD."
+        data_tests:
           - dbt_expectations.expect_column_quantile_values_to_be_between:
               arguments:
                 quantile: .99
@@ -99,3 +126,36 @@ models:
           - dbt_expectations.expect_column_values_to_be_of_type:
               arguments:
                 column_type: integer
+  - name: dim_long_term_listings
+    description: "Listings that require a minimum stay of 30 nights or more (Python model)."
+
+  - name: dim_fullmoon
+    description: "Full moon dates flagged as German public holidays (Python model, uses the holidays package)."
+    columns:
+      - name: full_moon_date
+        description: "Date of the full moon."
+      - name: IS_HOLIDAY
+        description: "True if the full moon falls on a German public holiday."
+  - name: fct_reviews
+    description: "One row per review with text. Incremental: loads only reviews newer than the latest loaded date, or a date range via start_date / end_date vars."
+    columns:
+      - name: review_id
+        description: "Surrogate key: hash of listing_id, review_date, reviewer_name and review_text."
+      - name: listing_id
+        description: "Reviewed listing; references dim_listings_cleansed."
+      - name: review_date
+        description: "Date the review was written."
+      - name: review_sentiment
+        description: "Sentiment label from the source: positive, neutral or negative."
+
+  - name: fct_reviews_sentiment_score
+    description: "fct_reviews plus a numeric sentiment score calculated with TextBlob (Python model)."
+    columns:
+      - name: SENTIMENT_SCORE
+        description: "TextBlob polarity of the review text, from -1 (negative) to 1 (positive)."
+
+  - name: mart_fullmoon_reviews
+    description: "Reviews flagged by whether they were written the day after a full moon. Built in yearly microbatches."
+    columns:
+      - name: is_full_moon
+        description: "'full moon' if review_date is the day after a full moon, otherwise 'not full moon'."

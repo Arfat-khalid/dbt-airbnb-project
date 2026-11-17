@@ -220,7 +220,7 @@ flowchart LR
 
 ## Related
 
-- **Orchestration:** [dagster-airbnb](https://github.com/Arfat-khalid/<dagster-repo-name>): Dagster project that materialises these dbt models as assets, with schedules and partitions.
+- **Orchestration:** [dagster-airbnb](https://github.com/Arfat-khalid/dagster-airbnb): Dagster project that materialises these dbt models as assets, with schedules and partitions.
 
 ---
 
